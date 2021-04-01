@@ -1,0 +1,105 @@
+
+Locked count: 6
+Count in loop is 6 en i is 0
+Is 1 een winner van 1?
+Selected pair is visited: 0, with winner 1 and loser 2.
+Visited 0 = 1
+(in winner-loop) Visited 0 is 1. Count = 6
+Count in loop is 6 en i is 0
+Is 2 een winner van 1?
+Count in loop is 6 en i is 1
+Is 2 een winner van 2?
+Selected pair is visited: 1, with winner 2 and loser 3.
+Visited 1 = 1
+(in winner-loop) Visited 1 is 1. Count = 6
+Count in loop is 6 en i is 0
+Is 3 een winner van 1?
+Count in loop is 6 en i is 1
+Is 3 een winner van 2?
+Count in loop is 6 en i is 2
+Is 3 een winner van 3?
+Selected pair is visited: 2, with winner 3 and loser 4.
+Visited 2 = 1
+Next pair 3 is een Cyclus!
+Count in loop is 6 en i is 0
+Is 1 een winner van 1?
+Selected pair is visited: 0, with winner 1 and loser 2.
+Visited 0 = 1
+(in winner-loop) Visited 0 is 1. Count = 6
+Count in loop is 6 en i is 0
+Is 2 een winner van 1?
+Count in loop is 6 en i is 1
+Is 2 een winner van 2?
+Selected pair is visited: 1, with winner 2 and loser 3.
+Visited 1 = 1
+(in winner-loop) Visited 1 is 1. Count = 6
+Count in loop is 6 en i is 0
+Is 3 een winner van 1?
+Count in loop is 6 en i is 1
+Is 3 een winner van 2?
+Count in loop is 6 en i is 2
+Is 3 een winner van 3?
+Selected pair is visited: 2, with winner 3 and loser 4.
+Visited 2 = 1
+(in winner-loop) Visited 2 is 1. Count = 6
+Count in loop is 6 en i is 0
+Is 4 een winner van 1?
+Count in loop is 6 en i is 1
+Is 4 een winner van 2?
+Count in loop is 6 en i is 2
+Is 4 een winner van 3?
+Count in loop is 6 en i is 3
+Is 4 een winner van 4?
+Selected pair is visited: 4, with winner 4 and loser 5.
+Visited 3 = 1
+(in winner-loop) Visited 4 is 1. Count = 6
+Count in loop is 6 en i is 0
+Is 5 een winner van 1?
+Count in loop is 6 en i is 1
+Is 5 een winner van 2?
+Count in loop is 6 en i is 2
+Is 5 een winner van 3?
+Count in loop is 6 en i is 3
+Is 5 een winner van 4?
+Count in loop is 6 en i is 4
+Is 5 een winner van 2?
+Count in loop is 6 en i is 5
+Is 5 een winner van 1?
+(in no-loop) Visited 7 is 0
+Count in loop is 5 en i is 0
+Is 5 een winner van 1?
+Count in loop is 5 en i is 1
+Is 5 een winner van 2?
+Count in loop is 5 en i is 2
+Is 5 een winner van 3?
+Count in loop is 5 en i is 3
+Is 5 een winner van 4?
+Count in loop is 5 en i is 4
+Is 5 een winner van 2?
+(in no-loop) Visited 6 is 0
+Count in loop is 4 en i is 0
+Is 5 een winner van 1?
+Count in loop is 4 en i is 1
+Is 5 een winner van 2?
+Count in loop is 4 en i is 2
+Is 5 een winner van 3?
+Count in loop is 4 en i is 3
+Is 5 een winner van 4?
+(in no-loop) Visited 4 is 1
+Count in loop is 3 en i is 0
+Is 5 een winner van 1?
+Count in loop is 3 en i is 1
+Is 5 een winner van 2?
+Count in loop is 3 en i is 2
+Is 5 een winner van 3?
+(in no-loop) Visited 2 is 1
+Count in loop is 2 en i is 0
+Is 5 een winner van 1?
+Count in loop is 2 en i is 1
+Is 5 een winner van 2?
+(in no-loop) Visited 1 is 1
+Count in loop is 1 en i is 0
+Is 5 een winner van 1?
+(in no-loop) Visited 0 is 1
+Hoera: paar 9 (6, 1) is een goed paar.
+Locked count: 7
