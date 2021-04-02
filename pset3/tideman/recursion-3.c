@@ -8,12 +8,13 @@ typedef struct
     int loser;
 }
 pair;
-const int PAIRCOUNT = 10;
+const int PAIRCOUNT = 11;
 //pair pairs[PAIRCOUNT] = {{1,2},{1,4},{3,2}, {1,3},{3,4},{2,3}}; // final cycle 6
 // pair pairs[PAIRCOUNT] = {{1,2},{2,3},{3,4},{4,3},{4,5},{5,1},{2,5},{1,6},{4,1}}; // badpairs
-pair pairs[PAIRCOUNT] = {{1,2},{2,3},{3,4},{4,3},{4,5},{5,1},{2,5},{1,6},{4,1},{6,1}}; // badpairs final cycle 10
+pair pairs[PAIRCOUNT] = {{1,2},{2,3},{3,4},{4,3},{4,5},{5,1},{2,5},{1,6},{4,1},{6,1},{3,1}}; // badpairs final cycle 11
+
 //pair pairs[PAIRCOUNT] = {{0,1},{1,2},{2,3},{3,2},{2,0}};
-// pair pairs[PAIRCOUNT] = {{1,2},{2,3},{4,3},{5,4},{1,5},{6,1},{6,4}}; // goodpairs
+//pair pairs[PAIRCOUNT] = {{1,2},{2,3},{4,3},{5,4},{1,5},{6,1},{6,4}}; // goodpairs 7
 bool cycle(int winner, int loser, int locked_count, int selected_pairs[], bool visited[], bool flag, int original_loser);
 
 int main ()
@@ -80,19 +81,26 @@ bool cycle(int winner, int loser, int count, int selected_pairs[], bool visited[
                 // here we should keep making those links with the follo
                 // wing losers, maybe we find a cycle
             // but if it doesn't find what it looks for on a first run, a second one, or a third might be needed...
-            flag = true;
-          return cycle(winner, current_loser, count , selected_pairs, visited, flag, original_loser);
+            //flag = true;
+          cycle(winner, current_loser, count , selected_pairs, visited, flag, original_loser); // return verwijderd
         }
-        else if (flag == true)
-        {
-            flag = false;
-            // but if the loop found a winner, but didn't create a cycle, we should
-            // check if there's a second or more winner we overlooked...
-            return cycle(winner, original_loser, count, selected_pairs, visited, flag, original_loser); // TIJDELIJK UIT
-        }
-        else
+        // dit ook tijdelijk verwijderd
+        // else if (flag == true)
+        // {
+        //     flag = false;
+        //     // but if the loop found a winner, but didn't create a cycle, we should
+        //     // check if there's a second or more winner we overlooked...
+        //     return cycle(winner, original_loser, count, selected_pairs, visited, flag, original_loser); // TIJDELIJK UIT
+        // }
+        else if (is_winner == false)
         {
           // no options left
             return false;
         }
+        else
+        {
+            return true;
+        }
+//return false; // is dat hier op zijn plaats?
+return true;
 }

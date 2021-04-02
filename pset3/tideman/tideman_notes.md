@@ -88,3 +88,8 @@ return recursieve functie(args);
         winners[i] = this_winner;
         losers[i] = this_loser;
     }
+
+return is niet altijd nodig voor recursieve functieasi
+
+Het idee om een functieresultaat (true or false) te gebruiken als IF CONDITIE!!!
+IS geniaal!!!

@@ -34,7 +34,7 @@ void sort_pairs(void);
 void lock_pairs(void);
 void print_winner(void);
 // helper function
-bool cycle(int winner, int loser, int count, int selected_pairs[]);
+bool B_defeats_A(int A, int B);
 
 int main(int argc, string argv[])
 {
@@ -206,20 +206,13 @@ void sort_pairs(void)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-    // from the sorted pairs array, select the pairs to be locked
-    // and make them true in the locked array. If cycle, skip!
-    // first pair can be looked:
     int locked_count = 0;
-    int selected_pairs[pair_count];
-    selected_pairs[0] = 0;
     for (int i = 0; i < pair_count; i++)
     {
-        if (!cycle(pairs[i].winner, pairs[i].loser, locked_count, selected_pairs))
+        if (!B_defeats_A(pairs[i].winner, pairs[i].loser))
         {
-            printf("Hoera: paar %d (%d, %d) is een goed paar.\n", i + 1, pairs[i].winner, pairs[i].loser);
+           printf("Hoera: paar %d (%d, %d) is een goed paar.\n", i + 1, pairs[i].winner, pairs[i].loser);
             locked[pairs[i].winner][pairs[i].loser] = true;
-            selected_pairs[locked_count] = i;
-            locked_count++;
         }
     }
    return;
@@ -232,46 +225,23 @@ void print_winner(void)
     return;
 }
 // helper function locked_pairs
-bool cycle(int winner, int loser, int count, int selected_pairs[])
+bool B_defeats_A(int A, int B)
 {
-    bool is_winner = false;
-    int current_winner;
-    int current_loser;
-    bool visited[count];
-    int rest = 0;
-    for (int i = 0; i < count; i++)
-
-    // initialize visited with falses
-    for (int i = 0; i < count ; i++)
+    if (locked[B][A] == true)
     {
-        visited[i] = false;
+        return true;
     }
-    {
-        current_winner = pairs[selected_pairs[i]].winner;
-        current_loser = pairs[selected_pairs[i]].loser;
-
-        if (loser == current_winner && visited[i] == false)
+        for (int i = 0; i < pair_count; i++)
         {
-            rest = count - i - 1;
-            visited[i] = true;
-            is_winner = true;
-            break;
+            if (locked[B][pairs[i].loser] == true)
+            {
+                // All the A's, defeated by B
+                 printf("Wint %d van %d?\n", pairs[i].loser, A);
+                 if (B_defeats_A(A, pairs[i].loser))
+                 {
+                     return true;
+                 }
+            }
         }
-        else
-            rest = count - i - 1;
-    }
-    if (is_winner == true)
-    {
-        if (winner == current_loser)
-            return true;
-        else
-            return cycle(winner, current_loser, count, selected_pairs);
-    }
-    else
-    {
-        if (rest <= 0)
-            return false;
-        else
-            return cycle(winner, loser, rest, selected_pairs);
-    }
+    return false;
 }
