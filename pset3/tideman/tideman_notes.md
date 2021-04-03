@@ -92,4 +92,37 @@ return recursieve functie(args);
 return is niet altijd nodig voor recursieve functieasi
 
 Het idee om een functieresultaat (true or false) te gebruiken als IF CONDITIE!!!
-IS geniaal!!!
+IS geniaal!!!include
+
+# Print Winner
+
+Hier is het de bedoeling om 1 winnaar te printen.
+Dat is dus de naam van een persoon, en al die namen
+zitten in de array candidates.
+
+de winnaar kan ik vinden door te kijken in LOCKED.
+Wie geen verliezer is, is de winner.
+
+dus als locked[i][j] == false voor elke winnaar j, heb ik de winnaar.
+
+De winnaars kan ik halen uit mijn pairs[pair_count]. winner array.
+
+Daarna moet ik het verkregen nummer in de candidates array gooien en zou het moeten
+werken.
+
+
+DUs psedudocode:
+
+for each winner in pairs
+    if locked[x][winner] is false
+    return winner as candidate[winner]
+
+
+of kan het nog korter en recursiever? Met hergebruik van mijn functie?
+
+if locked[a][x] and not locked[x][a] then success
+
+NEEN DUS
+
+ Which of the candidates has no arrow pointed at them!!! Veel
+ simpeler.

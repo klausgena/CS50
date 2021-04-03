@@ -35,6 +35,7 @@ void lock_pairs(void);
 void print_winner(void);
 // helper function
 bool B_defeats_A(int A, int B);
+bool is_source(int A);
 
 int main(int argc, string argv[])
 {
@@ -80,7 +81,7 @@ int main(int argc, string argv[])
         {
             string name = get_string("Rank %i: ", j + 1);
 
-             if (!vote(j, name, ranks))
+            if (!vote(j, name, ranks))
             {
                 printf("Invalid vote.\n");
                 return 3;
@@ -121,7 +122,9 @@ void record_preferences(int ranks[])
     for (int i = 0; i < candidate_count - 1; i ++)
     {
         // give winner a point for every loser
-        for (int j = i + 1; j < candidate_count - i + 1 && j < candidate_count; j++) // to prevent segmentation fault when only 2 candidates...
+        for (int j = i + 1; j < candidate_count - i + 1
+             && j < candidate_count; j++)
+            // to prevent segmentation fault when only 2 candidates...
         {
             preferences[ranks[i]][ranks[j]]++;
             printf("prefs: %i", preferences[ranks[i]][ranks[j]]);
@@ -143,11 +146,11 @@ void add_pairs(void)
             // important to match candidates' scores against each other
             int score = preferences[i][j] - preferences[j][i];
             if (score > 0)
-           {
-               pairs[count].winner = i;
-               pairs[count].loser = j;
-               count++;
-           }
+            {
+                pairs[count].winner = i;
+                pairs[count].loser = j;
+                count++;
+            }
         }
     }
     // update global variable pair_count
@@ -181,22 +184,22 @@ void sort_pairs(void)
     {
         swapped = 0;
         for (int i = 0, j = 1; i < pair_count && j < pair_count ; i++, j++)
+        {
+            if (differences[i] < differences[j])
             {
-                if (differences[i] < differences[j])
-                    {
-                        // use temp vars to reorder array
-                        // also change order of difference to avoid infinite loop!
-                        int small_diff = differences[i];
-                        int big_diff = differences[j];
-                        differences[i] = big_diff;
-                        differences[j] = small_diff;
-                        pair small = pairs[i];
-                        pair big = pairs[j];
-                        pairs[i] = big;
-                        pairs[j] = small;
-                        swapped++;
-                    }
+                // use temp vars to reorder array
+                // also change order of difference to avoid infinite loop!
+                int small_diff = differences[i];
+                int big_diff = differences[j];
+                differences[i] = big_diff;
+                differences[j] = small_diff;
+                pair small = pairs[i];
+                pair big = pairs[j];
+                pairs[i] = big;
+                pairs[j] = small;
+                swapped++;
             }
+        }
     }
     while (swapped != 0);
     // return sorted pairs array
@@ -211,19 +214,26 @@ void lock_pairs(void)
     {
         if (!B_defeats_A(pairs[i].winner, pairs[i].loser))
         {
-           printf("Hoera: paar %d (%d, %d) is een goed paar.\n", i + 1, pairs[i].winner, pairs[i].loser);
             locked[pairs[i].winner][pairs[i].loser] = true;
         }
     }
-   return;
+    return;
 }
 
 // Print the winner of the election
 void print_winner(void)
 {
-    // TODO
+    // which of the candidates has no arrows pointed at them
+    for (int i = 0; i < candidate_count; i++)
+    {
+        if (is_source(i))
+        {
+            printf("%s\n", candidates[i]);
+        }
+    }
     return;
 }
+
 // helper function locked_pairs
 bool B_defeats_A(int A, int B)
 {
@@ -231,17 +241,31 @@ bool B_defeats_A(int A, int B)
     {
         return true;
     }
-        for (int i = 0; i < pair_count; i++)
+    for (int i = 0; i < pair_count; i++)
+    {
+        if (locked[B][pairs[i].loser] == true)
         {
-            if (locked[B][pairs[i].loser] == true)
+            // All the A's, defeated by B
+            if (B_defeats_A(A, pairs[i].loser))
             {
-                // All the A's, defeated by B
-                 printf("Wint %d van %d?\n", pairs[i].loser, A);
-                 if (B_defeats_A(A, pairs[i].loser))
-                 {
-                     return true;
-                 }
+                return true;
             }
         }
+    }
     return false;
+}
+// helper function print winner
+// check if A is somewhere in position B
+bool is_source(int A)
+{
+    // base case: if A is anywhere a loser (arrow points at it),
+    // than return false. Else return true.
+    for (int i = 0; i < candidate_count; i++)
+    {
+        if (locked[i][A] == true)
+        {
+            return false;
+        }
+    }
+    return true;
 }
