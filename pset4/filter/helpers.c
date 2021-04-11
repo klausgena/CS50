@@ -16,7 +16,7 @@ void grayscale(int height, int width, RGBTRIPLE image[height][width])
             int green = pixel[j].rgbtGreen;
             // make a sum of all three colors
             // calculate the average
-            int average = roundf((blue + red + green) / 3);
+            int average = roundf((float)(blue + red + green) / 3.0);
             // insert this average in all three colors
             pixel[j].rgbtBlue = average;
             pixel[j].rgbtRed = average;
@@ -31,15 +31,16 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
 {
     for (int i = 0; i < height; i++)
     {
-        int j = 0;
+        int j = 0; // waarom 1 en geen 0?
         // move every pixel in the row to it's opposite position
-        while (width > j)
+        while (j < (width / 2))
         {
             RGBTRIPLE* left_address = *(image + i) + j;
-            RGBTRIPLE* right_address = *(image +i) + (width - j);
+            RGBTRIPLE* right_address = *(image + i) + (width - j - 1);
+            RGBTRIPLE tmp = *left_address;
             // swap content
-            *left_address = image[i][width - j];
-            *right_address = image[i][j];
+            *left_address = *right_address;
+            *right_address = tmp;
             j++;
         }
     }
