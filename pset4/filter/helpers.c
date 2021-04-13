@@ -1,8 +1,6 @@
 #include "helpers.h"
 #include <math.h>
 #include <stdlib.h>
-// helper function
-void average_surrounding_pixels(RGBTRIPLE image[h][v], int c, int h, int v, int c2);
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
 {
@@ -48,55 +46,71 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
     return;
 }
 
-// Blur image
+// Blur image. Aha : Maar 1 pixel krijgt die average values!!!
+// TODO: watch video, check border cases, check averages.
 void blur(int height, int width, RGBTRIPLE image[height][width])
 {
+    int h, v, m;
     // for loop for every pixel
-    // a list of conditions
     // in every condition a call to average_surrounding_pixels
     // with the correct counters and offsets.
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            // a list of conditions for corner cases: top row, left and right
+            // rows, last row.
+            if (i == 0)
+                h = 0; // instead of -1
+            else
+                h = -1;
+            if (j == 0)
+                v = 0; // instead of -1
+            else
+                v = -1;
+            if (i == height - 1 || j == width - 1) // AM I WRONG HERE?
+                m = 0; // instead of 1
+            else
+                m = 1;
+            float all_red = 0, all_blue = 0, all_green = 0;
+            int count = 0;
+            // I have to pass the value of i and j to select the right pixels
+            // but I also have to offset the other values...
+            int k, l;
+            for (k = i + h; k <= m + i; k++)
+            {
+                for (l = j + v; l <= m + j; l++)
+                {
+                    RGBTRIPLE* pixel = image[k];
+                    all_red = pixel[l].rgbtRed + all_red;
+                    all_blue = pixel[l].rgbtBlue + all_blue;
+                    all_green = pixel[l].rgbtGreen + all_green;
+                    count ++;
+                }
+            }
+            int average_blue = round(all_blue / count);
+            int average_red = round(all_red / count);
+            int average_green = round(all_green / count);
+            // k and l need to be reset
+            // THIS LOOOP IS NOT NEEDED: ONLY ASSIGN THE AVERAGE TO ONE PIXEL!
+            for (k = i + h; k <= m + i; k++)
+            {
+                RGBTRIPLE* pixelrow = image[k];
+                for (l = j + v; l <= m + j; l++)
+                {
+                    // assign every pixel color its average
+                    pixelrow[l].rgbtRed = average_red;
+                    pixelrow[l].rgbtBlue = average_blue;
+                    pixelrow[l].rgbtGreen = average_green;
+                }
+            }
+        }
+    }
     return;
 }
 
 // Detect edges
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
-    return;
-}
-// helper function to calculate averages and assign them to the pixels
-void average_surrounding_pixels(int c, int h, int v, int c2) // ik moet de pixel doorgeven aan de functie!!!!
-// hierover nadenken
-// TODO: ofwel in de condities de verschillende h v en c toewijzen!! en deze functie niet gebruiken.
-{
-    float all_red = 0, all_blue = 0, all_green = 0;
-    int count = 0;
-    for (int i = h; i <= c; i++)
-    {
-        for (int j = v, j <= c2; j++)
-        {
-            RGBTRIPLE pixel = image[i][j];
-            all_red = pixel.rgbtRed + all_red;
-            all_blue = pixel.rgbtBlue + all_blue;
-            all_green = pixel.rgbtGreen + all_green;
-            count ++;
-        }
-    }
-    // assigning should also be a for loop, because we need the averages
-    int average_blue = roundf(all_blue / (float)count);
-    int average_red = roundf(all_red) / (float)count);
-    int average_green = roundf(all_green) / (float)count);
-
-    for (int i = h; i <= c; i++)
-    {
-        RGBTRIPLE* pixelrow = image[i];
-        for (int j = v, j <= c2; j++)
-        {
-            // assign every pixel color its average
-            // make a loop over an array with RGB?
-            pixelrow[j].rgbtRed = average_red;
-            pixelrow[j].rgbtBlue = average_blue;
-            pixelrow[j].rgbtGreen = average_green;
-        }
-    }
     return;
 }
