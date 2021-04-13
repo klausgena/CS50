@@ -1,6 +1,7 @@
 #include "helpers.h"
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
 {
@@ -46,11 +47,16 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
     return;
 }
 
-// Blur image. Aha : Maar 1 pixel krijgt die average values!!!
+// Blur image.
 // TODO: watch video, check border cases, check averages.
 void blur(int height, int width, RGBTRIPLE image[height][width])
 {
-    int h, v, m;
+    int h, v, mv, mh;
+    // create copy of original picture
+    RGBTRIPLE (*imagecopyarr)[height];
+    imagecopyarr = malloc(sizeof(*imagecopyarr) * width);
+    memcpy(&imagecopyarr[0][0], &image[0][0], sizeof(image[0][0]) * height * width);
+    // THAT WAS NOT EASY!!! Have to do pointer exercices to get the hang of it!
     // for loop for every pixel
     // in every condition a call to average_surrounding_pixels
     // with the correct counters and offsets.
@@ -61,51 +67,51 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             // a list of conditions for corner cases: top row, left and right
             // rows, last row.
             if (i == 0)
-                h = 0; // instead of -1
-            else
-                h = -1;
-            if (j == 0)
                 v = 0; // instead of -1
             else
                 v = -1;
-            if (i == height - 1 || j == width - 1) // AM I WRONG HERE?
-                m = 0; // instead of 1
+            if (j == 0)
+                h = 0; // instead of -1
             else
-                m = 1;
+                h = -1;
+            if (i == height - 1)
+                mv = 0;
+            else
+                mv = 1;
+            if (j == width - 1) // AM I WRONG HERE?
+                mh = 0; // instead of 1
+            else
+                mh = 1;
             float all_red = 0, all_blue = 0, all_green = 0;
+            int average_blue = 0, average_red = 0, average_green = 0;
             int count = 0;
             // I have to pass the value of i and j to select the right pixels
             // but I also have to offset the other values...
             int k, l;
-            for (k = i + h; k <= m + i; k++)
+            for (k = i + v; k <= mv + i; k++)
             {
-                for (l = j + v; l <= m + j; l++)
+                for (l = j + h; l <= mh + j; l++)
                 {
-                    RGBTRIPLE* pixel = image[k];
-                    all_red = pixel[l].rgbtRed + all_red;
-                    all_blue = pixel[l].rgbtBlue + all_blue;
-                    all_green = pixel[l].rgbtGreen + all_green;
+                    RGBTRIPLE pixel = imagecopyarr[k][l];
+                    all_red = pixel.rgbtRed + all_red;
+                    all_blue = pixel.rgbtBlue + all_blue;
+                    all_green = pixel.rgbtGreen + all_green;
                     count ++;
                 }
             }
-            int average_blue = round(all_blue / count);
-            int average_red = round(all_red / count);
-            int average_green = round(all_green / count);
-            // k and l need to be reset
-            // THIS LOOOP IS NOT NEEDED: ONLY ASSIGN THE AVERAGE TO ONE PIXEL!
-            for (k = i + h; k <= m + i; k++)
-            {
-                RGBTRIPLE* pixelrow = image[k];
-                for (l = j + v; l <= m + j; l++)
-                {
-                    // assign every pixel color its average
-                    pixelrow[l].rgbtRed = average_red;
-                    pixelrow[l].rgbtBlue = average_blue;
-                    pixelrow[l].rgbtGreen = average_green;
-                }
-            }
+            average_blue = round(all_blue / count);
+            average_red = round(all_red / count);
+            average_green = round(all_green / count);
+            // MIJN PROBLEEM: DON'T CHANGE THE IMAGE ITSELF, BUT IMPLEMENT THE
+            // CHANGE IN A COPY OF THE IMAGE...(OR GET THE DATA FROM AN
+            // UNTOUCHED OLD Copy). Here we need malloc...
+            RGBTRIPLE* pixelrow = image[i];
+            pixelrow[j].rgbtRed = average_red;
+            pixelrow[j].rgbtBlue = average_blue;
+            pixelrow[j].rgbtGreen = average_green;
         }
     }
+    free(imagecopyarr);
     return;
 }
 
