@@ -53,10 +53,15 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 {
     int h, v, mv, mh;
     // create copy of original picture
-    RGBTRIPLE (*imagecopyarr)[height];
-    imagecopyarr = malloc(sizeof(*imagecopyarr) * width);
+    RGBTRIPLE (*imagecopyarr)[width];
+    imagecopyarr = malloc(sizeof(*imagecopyarr) * height);
+    if (imagecopyarr == NULL)
+    {
+        return;
+    }
     memcpy(&imagecopyarr[0][0], &image[0][0], sizeof(image[0][0]) * height * width);
     // THAT WAS NOT EASY!!! Have to do pointer exercices to get the hang of it!
+    // REWRITE WITH COPY IN MIND
     // for loop for every pixel
     // in every condition a call to average_surrounding_pixels
     // with the correct counters and offsets.
@@ -102,9 +107,6 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             average_blue = round(all_blue / count);
             average_red = round(all_red / count);
             average_green = round(all_green / count);
-            // MIJN PROBLEEM: DON'T CHANGE THE IMAGE ITSELF, BUT IMPLEMENT THE
-            // CHANGE IN A COPY OF THE IMAGE...(OR GET THE DATA FROM AN
-            // UNTOUCHED OLD Copy). Here we need malloc...
             RGBTRIPLE* pixelrow = image[i];
             pixelrow[j].rgbtRed = average_red;
             pixelrow[j].rgbtBlue = average_blue;
@@ -118,5 +120,69 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 // Detect edges
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
+    // copy image
+    RGBTRIPLE (*image_copy)[width];
+    image_copy = malloc(sizeof(*image_copy) * height);
+    if (image_copy == NULL)
+    {
+        return;
+    }
+    memcpy(&image_copy[0][0], &image[0][0], sizeof(image[0][0]) * height * width);
+    // loop over each pixel
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            // initialize arrays for Gx and Gy
+            int Gx[9] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+            int Gy[9] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+            int redGx = 0, blueGx = 0, greenGx = 0;
+            int redGy = 0, blueGy = 0, greenGy = 0;
+            int pixnum = 0;
+            for (int k = -1 + i; k <= 1 + i ; k++)
+            {
+                for (int l = -1 + j; l <= 1 + j; l++)
+                {
+                    // get RGB values for pixels
+                    // but not if outside image boundaries
+                    if (k == -1 || l == -1 || k == height || l == width)
+                    {
+                        pixnum++;
+                        continue;
+                    }
+                    else
+                    {
+                        RGBTRIPLE pixel = image_copy[k][l];
+                        redGx =  redGx + pixel.rgbtRed * Gx[pixnum];
+                        greenGx = greenGx + pixel.rgbtGreen * Gx[pixnum];
+                        blueGx = blueGx + pixel.rgbtBlue * Gx[pixnum];
+                        redGy = redGy + pixel.rgbtRed * Gy[pixnum];
+                        blueGy = blueGy + pixel.rgbtBlue * Gy[pixnum];
+                        greenGy = greenGy + pixel.rgbtGreen * Gy[pixnum];
+                        pixnum++;
+                    }
+                }
+            }
+            // calculate sobel nr.
+            RGBTRIPLE* pixelrow = image[i];
+            int sobel_red = round(sqrt((redGx * redGx) + (redGy * redGy)));
+            int sobel_blue = round(sqrt((blueGx * blueGx) + (blueGy * blueGy)));
+            int sobel_green = round(sqrt((greenGx * greenGx) + (greenGy * greenGy)));
+            // WARNING
+            if (sobel_red <= 255)
+                pixelrow[j].rgbtRed = sobel_red;
+            else
+                pixelrow[j].rgbtRed = 255;
+            if (sobel_green <= 255)
+                pixelrow[j].rgbtGreen = sobel_green;
+            else
+                pixelrow[j].rgbtGreen = 255;
+            if  (sobel_blue <= 255)
+                pixelrow[j].rgbtBlue = sobel_blue;
+            else
+                pixelrow[j].rgbtBlue = 255;
+        }
+    }
+    free(image_copy);
     return;
 }
