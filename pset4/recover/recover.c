@@ -15,79 +15,85 @@ int main(int argc, char *argv[])
         printf("Usage: ./recover image\n");
         return 1;
     }
-   // is file readable?
-   FILE *file = fopen(argv[1], "r");
-   if (file == NULL)
-   {
-       fprintf(stderr, "Could not open %s.\n", argv[1]);
-       return 1;
-   }
-   // allocate 512 BYTES
-   BYTE(*block)[512] = calloc(512, sizeof(BYTE));
-   if (block == NULL)
-   {
-       fprintf(stderr, "Memory error.\n");
-       return 1;
-   }
-   // read block into memory
-   // count all positives, for naming purposes
-   int count = 0;
-   bool file_exists = false;
-   char filename[8];
-   FILE *filenamepointer = NULL;
-   while (fread(block, 512 * sizeof(BYTE), 1, file) == 1)
-   {
-        // if not first file we write, close previous file
-        if (file_exists == true && check_signature(*block))
+    // is file readable?
+    FILE *file = fopen(argv[1], "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Could not open %s.\n", argv[1]);
+        return 1;
+    }
+    // allocate 512 BYTES
+    BYTE(*block)[512] = calloc(512, sizeof(BYTE));
+    if (block == NULL)
+    {
+        fprintf(stderr, "Memory error.\n");
+        return 1;
+    }
+    // read block into memory
+    // count all positives, for naming purposes
+    int count = 0;
+    bool is_first = true;
+    char filename[8];
+    FILE *filenamepointer = NULL;
+    while (fread(block, 512 * sizeof(BYTE), 1, file) == 1)
+    {
+        // check if block begins with signature
+        if (check_signature(*block))
         {
-            fclose(filenamepointer);
-            file_exists = false;
-        }
-        if (file_exists == false && check_signature(*block))
-        {
-            // create output file
+            // check if we are already writing a file
+            // if not, create new file and write. If yes,
+            // close old file and then create new file and write.
+            if (is_first == true)
+            {
+                is_first = false;
+            }
+            else
+            {
+                fclose(filenamepointer);
+            }
             sprintf(filename, "%03d.jpg", count);
             filenamepointer = fopen(filename, "w");
             if (filenamepointer == NULL)
             {
-                fclose(file);
+                fclose(filenamepointer);
                 fprintf(stderr, "Could not create file.\n");
             }
             //  open new outfile and add block
             fwrite(block, 512 * sizeof(BYTE), 1, filenamepointer);
             count++;
-            file_exists = true;
         }
-        else if (file_exists == true)
-        {
-            // if signature existed: add block to existing outfile
-            fwrite(block, 512 * sizeof(BYTE), 1, filenamepointer);
-        }
-        // if no signature at beginning of file, keep looking
+        // block does not start with signature
         else
         {
-             continue;
+            if (is_first == false)
+            {
+                // append block to existing file
+                fwrite(block, 512 * sizeof(BYTE), 1, filenamepointer);
+            }
         }
-   }
-   free(block);
-return 0;
+    }
+    fclose(filenamepointer);
+    free(block);
+    return 0;
 }
 
 // helper function
 bool check_signature(BYTE *block)
 {
     // check first 4 bytes
-    if (block[0] != 0xff && block[1] != 0xd8 && block[2] != 0xff)
+    if (block[0] == 0xff && block[1] == 0xd8 && block[2] == 0xff)
     {
-        return false;
-    }
-    else if (block[3] > 0xef || block[3] < 0xe0)
-    {
-       return false;
+        if (block[3] <= 0xef && block[3] >= 0xe0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
-        printf("We got lucky!\n");
-        return true;
+        return false;
     }
 }
