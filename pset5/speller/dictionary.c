@@ -143,14 +143,16 @@ bool unload(void)
         if (n->next == NULL)
         {
             free(n);
+            continue;
         }
         // free last el, go to the one before, free that one, etc.
-        while (n->next != NULL)
+        do
         {
            node *tmp = n;
            n = n->next;
            free(tmp);
         }
+        while (n != NULL);
         // free(n); double free or corruption?
     }
     return true;
