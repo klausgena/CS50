@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+{% if results == [] %}
+<p>You don't have any stocks yet. This will be an overview of your bought and sold stocks. Click on the links in the navigation bar
+to buy and sell your stocks</p>
+{% else %}
+<h1>Your stocks</h1>
+<p>This is an overview of all the stocks you bought and sold since you registered for an account. Click on the links in the navigation bar
+to buy and sell your stocks.</p>
+<table class="table">
+    <tr>
+        <th>Stock</th>
+        <th>Shares Bought or Sold</th>
+        <th>Price Bought</th>
+        <th>Purchase/Selling Date</th>
+    </tr>
+    {% for result in results %}
+    <tr>
+        <td>{{ result["symbol"] | upper }}</td>
+        <td>{{ result["shares"]  }}</td>
+        <td>{{ result["price"] | usd }}</td>
+        <td>{{ result['timestamp'] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

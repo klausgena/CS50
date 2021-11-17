@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+{% if results == [] %}
+<p>You don't have any stocks yet. This will be an overview of your stocks. Click on the links in the navigation bar
+to buy and sell your stocks</p>
+{% else %}
+<h1>Your stocks</h1>
+<p>This is an overview of your stocks. Click on the links in the navigation bar
+to buy and sell your stocks.</p>
+<table class="table">
+    <tr>
+        <th>Stock</th>
+        <th>Shares Owned</th>
+        <th>Current Price</th>
+        <th>Price Bought</th>
+        <th>Total Current Value</th>
+    </tr>
+    {% for result in results %}
+    {%if result["shares"] > 0 %}
+    <tr>
+        <td>{% if result["name"] != "" %}{{ result["name"] }} ({{ result["symbol"] | upper }}) {% else %} {{ result["symbol"] | upper }} {% endif %}</td>
+        <td>{{ result["shares"]  }}</td>
+        <td {% if result["price"] > result["old_price"] %} class="text-success" {% elif result["price"] < result["old_price"] %} class="text-danger" {% endif %}>{{ result["price"] | usd }}</td>
+        <td>{{ result["old_price"] | usd }}</td>
+        <td>{{ result["total_value"] | usd }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><em>Total Share Value</em></td>
+        <td>{{ grand_total | usd }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><em>Cash Left</em></td>
+        <td>{{ cash[0]['cash'] | usd }}</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td><em>Grand Total</em></td>
+        <td {% if total < 10000 %} class="text-danger" {% else %} class="text-success" {% endif %}>{{ total | usd }}</td>
+    </tr>
+</table>
+{% endif %}
+{% endblock %}
