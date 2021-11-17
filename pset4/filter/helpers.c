@@ -5,12 +5,12 @@
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
 {
-   // for every pixel (RGBTRIPLE) in image
-   for (int i = 0; i < height ; i++)
-   {
-       for (int j = 0; j < width; j++)
-       {
-            RGBTRIPLE* pixel = image[i]; // de pointer is de rij
+    // for every pixel (RGBTRIPLE) in image
+    for (int i = 0; i < height ; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            RGBTRIPLE *pixel = image[i]; // de pointer is de rij
             int blue = pixel[j].rgbtBlue;
             int red = pixel[j].rgbtRed;
             int green = pixel[j].rgbtGreen;
@@ -21,8 +21,8 @@ void grayscale(int height, int width, RGBTRIPLE image[height][width])
             pixel[j].rgbtBlue = average;
             pixel[j].rgbtRed = average;
             pixel[j].rgbtGreen = average;
-       }
-   }
+        }
+    }
     return;
 }
 
@@ -35,8 +35,8 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
         // move every pixel in the row to it's opposite position
         while (j < (width / 2))
         {
-            RGBTRIPLE* left_address = *(image + i) + j;
-            RGBTRIPLE* right_address = *(image + i) + (width - j - 1);
+            RGBTRIPLE *left_address = *(image + i) + j;
+            RGBTRIPLE *right_address = *(image + i) + (width - j - 1);
             RGBTRIPLE tmp = *left_address;
             // swap content
             *left_address = *right_address;
@@ -53,7 +53,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 {
     int h, v, mv, mh;
     // create copy of original picture
-    RGBTRIPLE (*imagecopyarr)[width];
+    RGBTRIPLE(*imagecopyarr)[width];
     imagecopyarr = malloc(sizeof(*imagecopyarr) * height);
     if (imagecopyarr == NULL)
     {
@@ -72,21 +72,37 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             // a list of conditions for corner cases: top row, left and right
             // rows, last row.
             if (i == 0)
-                v = 0; // instead of -1
+            {
+                v = 0;// instead of -1
+            }
             else
+            {
                 v = -1;
+            }
             if (j == 0)
-                h = 0; // instead of -1
+            {
+                h = 0;// instead of -1
+            }
             else
+            {
                 h = -1;
+            }
             if (i == height - 1)
+            {
                 mv = 0;
+            }
             else
+            {
                 mv = 1;
-            if (j == width - 1) // AM I WRONG HERE?
-                mh = 0; // instead of 1
+            }
+            if (j == width - 1)
+            {
+                mh = 0;
+            }
             else
+            {
                 mh = 1;
+            }
             float all_red = 0, all_blue = 0, all_green = 0;
             int average_blue = 0, average_red = 0, average_green = 0;
             int count = 0;
@@ -107,7 +123,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             average_blue = round(all_blue / count);
             average_red = round(all_red / count);
             average_green = round(all_green / count);
-            RGBTRIPLE* pixelrow = image[i];
+            RGBTRIPLE *pixelrow = image[i];
             pixelrow[j].rgbtRed = average_red;
             pixelrow[j].rgbtBlue = average_blue;
             pixelrow[j].rgbtGreen = average_green;
@@ -121,7 +137,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
     // copy image
-    RGBTRIPLE (*image_copy)[width];
+    RGBTRIPLE(*image_copy)[width];
     image_copy = malloc(sizeof(*image_copy) * height);
     if (image_copy == NULL)
     {
@@ -164,23 +180,35 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                 }
             }
             // calculate sobel nr.
-            RGBTRIPLE* pixelrow = image[i];
+            RGBTRIPLE *pixelrow = image[i];
             int sobel_red = round(sqrt((redGx * redGx) + (redGy * redGy)));
             int sobel_blue = round(sqrt((blueGx * blueGx) + (blueGy * blueGy)));
             int sobel_green = round(sqrt((greenGx * greenGx) + (greenGy * greenGy)));
             // WARNING
             if (sobel_red <= 255)
+            {
                 pixelrow[j].rgbtRed = sobel_red;
+            }
             else
+            {
                 pixelrow[j].rgbtRed = 255;
+            }
             if (sobel_green <= 255)
+            {
                 pixelrow[j].rgbtGreen = sobel_green;
+            }
             else
+            {
                 pixelrow[j].rgbtGreen = 255;
-            if  (sobel_blue <= 255)
+            }
+            if (sobel_blue <= 255)
+            {
                 pixelrow[j].rgbtBlue = sobel_blue;
+            }
             else
+            {
                 pixelrow[j].rgbtBlue = 255;
+            }
         }
     }
     free(image_copy);

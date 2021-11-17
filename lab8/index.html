@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="styles.css" rel="stylesheet">
+        <title>Trivia!</title>
+
+        <script>
+            // Multiple choice
+            function changeColor(el, color, answernr) {
+                button = document.getElementById(el);
+                button.style.backgroundColor = color;
+                button.style.color = "white";
+                let answerselector = "#answer-".concat(answernr);
+                if (color == 'green')
+                {
+                    document.querySelector(answerselector).textContent = "Correct!";
+                }
+                else {
+                    document.querySelector(answerselector).textContent = "Incorrect";
+                }
+            }
+            function checkValue () {
+                let myValue = document.querySelector('#part-2').value;
+                if (myValue == "6") {
+                    document.querySelector("#submit-2").addEventListener("click",
+                    function() {
+                    changeColor("part-2", "green", "2");});
+                }
+                else {
+                    document.querySelector("#submit-2").addEventListener("click",
+                    function() {
+                    changeColor("part-2", "red", "2");});
+                }
+            }
+
+            function listen() {
+                document.querySelector("#putin").addEventListener('click',
+                function () {changeColor("putin", "red", "1");});
+                document.querySelector("#luka").addEventListener('click',
+                function () {changeColor("luka", "green", "1");});
+                document.querySelector("#medv").addEventListener('click',
+                function () {changeColor('medv', "red", "1");});
+                document.querySelector('#submit-2').addEventListener('click',
+                function () {
+                    checkValue();
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', listen);
+        </script>
+
+    </head>
+    <body>
+
+        <div class="jumbotron">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+
+            <div class="section">
+                <h2>Part 1: Multiple Choice </h2>
+                <hr>
+                <h3>Which of these presidents has been elected
+                for the most terms?</h3>
+                <button id="putin">Putin</button>
+                <button id="luka">Lukashenko</button>
+                <button id="medv">Medvedev</button>
+                <p id="answer-1"></p>
+                <!-- TODO: Add multiple choice question here -->
+
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <h3>And for how many terms was he elected?</h3>
+                <input type="text" size="6" id="part-2">
+                <button type="button" id="submit-2">submit</button>
+                <p id="answer-2"></p>
+                <hr>
+
+                <!-- TODO: Add free response question here -->
+
+            </div>
+
+        </div>
+    </body>
+</html>

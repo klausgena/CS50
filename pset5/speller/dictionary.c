@@ -15,7 +15,7 @@ typedef struct node
 node;
 
 // Number of buckets in hash table
-const unsigned int N = 9973; // the hashing modulo has to be a large prime;
+const unsigned int N = 184007; // the hashing modulo has to be a large prime;
 
 // Hash table
 node *table[N];
@@ -47,9 +47,9 @@ bool check(const char *word)
 // Hashes word to a number
 unsigned int hash(const char *word)
 {
-    unsigned int hash = 0;
+    unsigned int hash = 5381;
     int i = 0;
-    while(word[i] != '\0')
+    while (word[i] != '\0')
     {
         int n = word[i] - 0; // turn char into int
         int p = 31; // prime number for hash
@@ -62,9 +62,12 @@ unsigned int hash(const char *word)
         {
             n = n - 'a' + 1;
         }
-        // the actual hashing function
+        // the actual hashing function - I tried two
+        // poging djb2 - http://www.cse.yorku.ca/~oz/hash.html
+        // djb2 is faster than the CS50 team's solution
         // https://cp-algorithms.com/string/string-hashing.html.
-        hash = n * p ^ i + hash;
+        // hash = n * p ^ i + hash;
+        hash = (hash + (hash << 5)) + n;
         // increase counter
         i++;
     }
@@ -90,7 +93,7 @@ bool load(const char *dictionary)
     }
     // read file
     char c;
-    while((c = getc(dict)) != EOF)
+    while ((c = getc(dict)) != EOF)
     {
         int i = 0;
         // create node with hash, word and null pointer
@@ -148,9 +151,9 @@ bool unload(void)
         // free last el, go to the one before, free that one, etc.
         do
         {
-           node *tmp = n;
-           n = n->next;
-           free(tmp);
+            node *tmp = n;
+            n = n->next;
+            free(tmp);
         }
         while (n != NULL);
         // free(n); double free or corruption?
